@@ -94,11 +94,9 @@ func (s *Scraper) Scrape(base string) {
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
 		if strings.HasPrefix(link, "/") || !strings.HasPrefix(link, "http") {
-			if !strings.HasPrefix(link, "/") {
-				link = "/" + link
-			}
 			link = e.Request.URL.String() + link
 		}
+		fmt.Println(link)
 		do := false
 		for _, proto := range []string{"http", "https", "ftp"} {
 			if strings.HasPrefix(link, proto) {
