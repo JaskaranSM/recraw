@@ -97,7 +97,7 @@ func (s *Scraper) Scrape(base string) {
 			if !strings.HasPrefix(link, "/") {
 				link = "/" + link
 			}
-			link = GetUrlHostName(base) + link
+			link = e.Request.URL.String() + link
 		}
 		do := false
 		for _, proto := range []string{"http", "https", "ftp"} {
