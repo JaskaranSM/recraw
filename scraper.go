@@ -81,7 +81,7 @@ func (s *Scraper) GetCollector() *colly.Collector {
 func (s *Scraper) GetQueue(con int) *queue.Queue {
 	q, _ := queue.New(
 		con,
-		&queue.InMemoryQueueStorage{MaxSize: 10000},
+		&queue.InMemoryQueueStorage{MaxSize: 100000},
 	)
 	return q
 }
@@ -124,6 +124,7 @@ func (s *Scraper) Scrape(base string) {
 		if s.Opts.ShouldDownload(mime.Extension()) && !s.IsUrlDownloaded(link) {
 			s.AddDownloadUrl(link)
 			go s.Dlr.AddDownload(link, path.Join(s.Opts.DownloadDir, GetFileNameUrl(link)))
+			return
 		}
 		req, err := e.Request.New("GET", link, nil)
 		if err != nil {
