@@ -74,6 +74,7 @@ func (d *Downloader) SetOnDownloadCompleteCallback(callback func(string)) {
 }
 
 func (d *Downloader) AddDownload(link string, filename string) {
+	filename = Uniquify(filename)
 	res, err := d.client.Get(link)
 	if err != nil {
 		fmt.Println(err)
@@ -86,7 +87,7 @@ func (d *Downloader) AddDownload(link string, filename string) {
 			<-d.Channel
 			d.wg.Done()
 		}()
-		writer, err := os.OpenFile(Uniquify(filename), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+		writer, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 		if err != nil {
 			fmt.Println(err)
 			return

@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -94,7 +95,7 @@ func (s *Scraper) Scrape(base string) {
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
 		if strings.HasPrefix(link, "/") || !strings.HasPrefix(link, "http") {
-			link = e.Request.URL.String() + link
+			link = e.Request.AbsoluteURL(link)
 		}
 		fmt.Println(link)
 		do := false
@@ -137,7 +138,11 @@ func (s *Scraper) Scrape(base string) {
 
 func (s *Scraper) SetOnDownloadCompleteCallback(cmd string) {
 	s.Dlr.SetOnDownloadCompleteCallback(func(filename string) {
-		exec.Command("bash", "-c", ParseCommandString(filename, cmd)).Run()
+		if runtime.GOOS == "windows" {
+			exec.Command("cmd", "/c", ParseCommandString(filename, cmd)).Run()
+		} else {
+			exec.Command("bash", "-c", ParseCommandString(filename, cmd)).Run()
+		}
 	})
 }
 
